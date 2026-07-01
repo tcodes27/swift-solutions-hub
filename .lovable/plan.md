@@ -1,88 +1,64 @@
-## Version 2.1 — Refinement & Content Expansion
+## Version 2.2 — Simplify navigation & introduce Category Modal
 
-Preserves all existing routes, components, and design tokens. Focused on polish, content depth, and navigation completeness.
+No visual redesign. No data loss. Preserve all article slugs and the interactive article walkthrough.
 
-### 1. Global Navigation (`src/components/site-nav.tsx`)
-- Remove `backdrop-blur` / translucent bg. Use solid `bg-background` matching the active theme.
-- Add scroll listener: apply `shadow-soft` + subtle border only after `window.scrollY > 8`.
-- Keep sticky positioning and existing links (unchanged structure).
+### 1. Navigation (`src/components/site-nav.tsx`, `SiteFooter`)
+- Remove "Popular Fixes" link from the primary nav array. Final links: Home, Browse Topics, How It Works, Admin. Keep "Submit Request" CTA button.
+- Remove the footer link to `/popular` as well.
 
-### 2. Back-to-Top button (new `src/components/back-to-top.tsx`)
-- Mounted from `PageShell` so it appears on every route.
-- Listens to scroll; visible when `scrollY / (docHeight - viewport) > 0.4`.
-- Fixed bottom-right, circular, primary color, `animate-fade-in` on show, `hover:scale-110` transition.
-- Click → `window.scrollTo({ top: 0, behavior: 'smooth' })`.
-- Add `scroll-behavior: smooth` to `html` in `src/styles.css`.
+### 2. Popular Fixes route (`src/routes/popular.tsx`)
+- Delete the file so `/popular` no longer resolves. Confirm no `<Link to="/popular">` remains anywhere (search & remove/replace with `/topics`).
+- Article data in `src/data/articles.ts` stays untouched — `views`, `featured`, categories, slugs all preserved.
 
-### 3. Content expansion (`src/data/articles.ts`)
-Rework categories to match the 11 requested groups: Account Access, Devices, Networking, Applications, Security, New Employee Setup, Remote Work, Hardware, Software Requests, Policies, IT Procedures. Preserve existing article slugs where possible (remap categories) so no article link 404s.
+### 3. New reusable Category Articles Modal (`src/components/category-modal.tsx`)
+- Built on existing shadcn `Dialog` primitives (already gives fade backdrop, scale-in, Esc close, click-outside close, focus trap, a11y).
+- Props: `category: Category | null`, `open: boolean`, `onOpenChange`.
+- Structure:
+  - **Sticky header** (inside DialogContent): category icon in a colored square, category name, one-line description, article count pill, close button (shadcn default).
+  - **Search input** — filters that category's articles by title/summary.
+  - **Featured article block** — first `featured: true` article in category (fallback: top-viewed). Larger card with accent border.
+  - **All articles list** — scrollable (`max-h-[60vh] overflow-y-auto`) list of compact article rows: title, summary, difficulty pill, estTime, lastUpdated, arrow icon. Hover: lift, soft glow, accent border, arrow translate-x, `cursor-pointer`.
+- Each row is a `<Link to="/articles/$slug">` that navigates to the full article page (closes modal via router navigation + `onOpenChange(false)` in an onClick handler).
+- Sizing: `sm:max-w-2xl`, rounded-2xl, `shadow-lifted`, purple accent trim on header.
+- Empty search state: small "No articles match" message with a "Clear search" button.
 
-Add ~5 articles per category (~55 total) using the titles listed in the brief. Each article gets: `title`, `summary`, `overview`, `symptoms`, `estTime`, `difficulty`, `lastUpdated`, `views`, `steps` (4–6 realistic steps), plus new fields `featured?: boolean` and `preview: string` (one-line quick-preview shown on hover).
+### 4. Home page (`src/routes/index.tsx`)
+- Categories preview section: show only **6–8** categories (slice from `categories`), heading "Pick a category to get started", and a "View all topics →" link to `/topics`.
+- Clicking a `CategoryTile` on Home opens the **Category Modal** instead of navigating. To keep `CategoryTile` reusable, add an optional `onSelect?: (category) => void` prop; when provided, render as a `<button>` and call `onSelect` instead of `<Link>`. When absent, keep existing `<Link>` behavior.
+- Home page manages `const [activeCategory, setActiveCategory] = useState<Category | null>(null)` and renders `<CategoryModal category={activeCategory} open={!!activeCategory} onOpenChange={o => !o && setActiveCategory(null)} />`.
+- Remove/soften any "Popular Fixes" hero CTA on Home; if a popular section exists on Home, keep it as a small supporting strip or remove — do not link to `/popular`.
 
-### 4. Home page category cards (`src/components/category-tile.tsx`)
-Already has hover lift + icon scale. Enhance:
-- Add `cursor-pointer`, stronger `hover:shadow-lifted`, border-color transition to `primary/60`.
-- Arrow: translate + rotate slightly; icon: scale + subtle rotate; add a soft radial glow via pseudo-element on hover.
-- Ensure focus-visible ring for a11y.
+### 5. Browse Topics page (`src/routes/topics.tsx`) — becomes the main KB
+- Keep breadcrumb, page title, subtitle, topic filter input.
+- Topic cards use the same `onSelect` prop pattern → open Category Modal (no navigation to `/topics/$slug`).
+- Add supporting sections **below** the topic grid, each using existing `ArticleCard`:
+  - **Popular Articles** — top 6 by `views`.
+  - **Recently Updated** — top 6 by `lastUpdated`.
+  - (Optional third "Suggested" — skip to avoid repetition; two sections is enough.)
+- Each section: heading + horizontal-ish responsive grid (`md:grid-cols-2 lg:grid-cols-3`).
 
-### 5. Browse Topics page (`src/routes/topics.tsx`)
-- Remove `font-serif`, keep SearchPanel-lite filter.
-- Reuse enhanced `CategoryTile` (glow, border accent, arrow slide, icon animation).
-- Add breadcrumb (Home › Browse Topics).
+### 6. Category detail route (`src/routes/topics.$slug.tsx`)
+- Keep the route working (deep links from prior sessions, breadcrumbs). No changes required beyond ensuring it still renders. Users primarily reach articles through the modal now, but `/topics/$slug` remains a valid fallback page.
 
-### 6. Category page (`src/routes/topics.$slug.tsx`) — intermediate article list
-Restructure the page to include:
-- Breadcrumb: Home › Browse Topics › {Category}.
-- Category header (title, description, count).
-- Article search input (local filter).
-- **Featured Articles** row (articles with `featured: true`, fallback to top-viewed 2).
-- **Recently Updated** row (sorted by `lastUpdated` desc, top 3).
-- **Popular Articles** row (sorted by `views` desc, top 3).
-- **All Articles** grid using a new `ArticleCard` component.
+### 7. Article page (`src/routes/articles.$slug.tsx`)
+- Unchanged: breadcrumbs, interactive walkthrough, prev/next nav all stay.
+- Update prev/next breadcrumb link "Browse Topics" is already correct; no `/popular` references to remove here.
 
-### 7. New `src/components/article-card.tsx`
-Reusable card with: category badge, title, summary, `preview` line, `estTime`, `difficulty` pill, `lastUpdated`, arrow icon. Hover: lift, glow shadow, accent border, arrow translate-x, `cursor-pointer`, smooth transitions, focus ring.
-
-Used in: category page, popular page, search results, related lists.
-
-### 8. Breadcrumbs
-Add a small `src/components/breadcrumbs.tsx` (using existing shadcn `breadcrumb.tsx` primitives) and render on: Browse Topics, Category, Article, Popular, Request, Admin, How it Works.
-
-### 9. Article page (`src/routes/articles.$slug.tsx`)
-- Add breadcrumb at top: Home › Browse Topics › {Category} › {Article}.
-- Keep existing interactive walkthrough (unchanged behavior).
-- Add **Previous / Next Article** footer nav — computed from the article's category list order; wraps around at ends or hides at boundaries. Each side shows arrow + article title in a card with hover lift.
-
-### 10. Search experience (`src/components/search-panel.tsx`)
-- Enhance result rows to include: title, category badge, difficulty, estTime, short description, keyword highlighting (already present), arrow icon.
-- Make dropdown scrollable (`max-h-[70vh] overflow-y-auto`).
-- **Empty state**: when query yields 0 results, show a friendly illustration block (Lucide `SearchX` in a soft circle) with heading "No matching articles found.", followed by Suggested Articles (top 3 by views), Popular Articles link, and a CTA button to `/request`.
-
-### 11. Popular page (`src/routes/popular.tsx`)
-Swap ad-hoc rows for the new `ArticleCard`; add breadcrumb; remove serif.
-
-### 12. Animations & micro-interactions
-- Ensure `PageShell` wraps children in `animate-fade-in` (already present) — verify each route benefits.
-- Add loading skeleton utility class usage where lists render (search panel while typing debounce, though data is local so mostly instant — keep skeleton component ready).
-- Standardize transitions to `transition-all duration-300 ease-out` on interactive cards.
+### 8. Content sanity pass (`src/data/articles.ts`)
+- Verify every category has ≥4 articles; every article has a unique slug and renders in `articles.$slug.tsx`. Add filler articles only if a category falls short (unlikely — current set has ~5 per category).
 
 ### Files created
-- `src/components/back-to-top.tsx`
-- `src/components/article-card.tsx`
-- `src/components/breadcrumbs.tsx`
+- `src/components/category-modal.tsx`
 
 ### Files edited
-- `src/data/articles.ts` (major expansion, category remap)
-- `src/components/site-nav.tsx` (opaque + scroll shadow)
-- `src/components/page-shell.tsx` (mount BackToTop)
-- `src/components/category-tile.tsx` (enhanced hover)
-- `src/components/search-panel.tsx` (richer results + empty state)
-- `src/styles.css` (smooth scroll + any new keyframes/glow utility)
-- `src/routes/topics.tsx` (breadcrumb, polish)
-- `src/routes/topics.$slug.tsx` (featured/recent/popular sections, breadcrumb, ArticleCard)
-- `src/routes/articles.$slug.tsx` (breadcrumb, prev/next footer)
-- `src/routes/popular.tsx` (ArticleCard + breadcrumb)
-- `src/routes/request.tsx`, `src/routes/admin.tsx`, `src/routes/how-it-works.tsx` (breadcrumb only)
+- `src/components/site-nav.tsx` (remove Popular Fixes link + footer link)
+- `src/components/category-tile.tsx` (add optional `onSelect` prop → renders as button)
+- `src/routes/index.tsx` (limit to 6–8 categories, wire modal, remove Popular CTA)
+- `src/routes/topics.tsx` (wire modal, add Popular + Recently Updated sections)
+- `src/data/articles.ts` (sanity check only; add articles only if short)
+
+### Files deleted
+- `src/routes/popular.tsx`
 
 ### Out of scope
-No changes to routing structure, theme toggle, admin dashboard logic, or the walkthrough state machine.
+- Visual redesign, theme changes, article walkthrough logic, admin dashboard, request form, how-it-works page, breadcrumbs component, back-to-top button.
