@@ -1,26 +1,23 @@
-Fix two small UI issues in Version 2.3 without redesigning the app.
+## Problem
 
-## Category cards — remove external-link arrow
+The homepage search dropdown is absolutely positioned, so when it opens it overlays down past the bottom edge of the purple hero card and floats into the section below. Visually the panel escapes the hero "box."
 
-File: `src/components/category-tile.tsx`
-- Remove the `ArrowUpRight` import and the arrow icon rendered in the top-right corner.
-- Keep the existing hover/clickable behavior: `cursor-pointer`, lift (`-translate-y-1.5`), border change to primary (`hover:border-primary`), icon scale (`group-hover:scale-110`), soft glow, and focus ring.
-- Leave the card as a `button` when `onSelect` is provided and as a `Link` fallback.
-- This removes the arrow from both the Home category cards and the Browse Topics category cards.
+## Fix
 
-## Homepage search dropdown — fix clipping and layout
+Make the dropdown part of the hero's normal flow so the hero grows with it and always contains it.
 
-Files: `src/components/search-panel.tsx` and `src/routes/index.tsx`
-- In `src/routes/index.tsx`, remove `overflow-hidden` from the hero container so the absolutely positioned search dropdown is not clipped.
-- In `src/components/search-panel.tsx`:
-  - The dropdown wrapper already has `position: relative` on the outer div; keep it.
-  - Change the dropdown panel to: `position: absolute; top: calc(100% + 12px); left: 0; right: 0; z-index: 50; max-height: 60vh; overflow-y: auto;` so it sits directly under the input and stays fully visible.
-  - Remove `overflow-hidden` from the dropdown panel itself.
-  - Tighten row spacing slightly (e.g., reduce vertical padding on result rows) while keeping title, summary, category badge, difficulty, and estimated time.
-  - Keep rounded corners, soft shadow, and hover states.
-  - Ensure the bottom of the dropdown is not cut off and the panel stays responsive on smaller screens.
+### `src/components/search-panel.tsx`
+- Change the results panel from `absolute` to `relative` (inline block below the input inside the same flex column).
+- Keep `max-height: 360px` with `overflow-y: auto` so long result lists scroll inside the panel instead of stretching the page.
+- Keep the existing pill input, rounded 24px panel, border, shadow, header, result rows (title, summary, category badge, difficulty, time, arrow), and Recent footer — all untouched.
+- Remove the now-unneeded `top-[calc(100%+12px)]` / `z-50` absolute offsets; use a simple `mt-3` gap.
 
-## Verification
-- Build and preview the Home and Browse Topics pages.
-- Confirm category cards no longer show the arrow icon but still animate on hover.
-- Confirm the homepage search dropdown opens fully, is scrollable, and is not clipped by the hero section.
+### `src/routes/index.tsx`
+- Wrap the `SearchPanel` in the existing centered `max-w-[760px]` container (already there) — no structural change.
+- Slightly increase hero bottom padding (`pb-20 md:pb-28`) so there is comfortable breathing room under the panel when it is closed, and the CTAs/stat strip still sit cleanly inside the hero.
+
+### Result
+- Panel is always visually inside the purple hero card.
+- Panel width matches the input exactly.
+- Long result lists scroll internally; the page never jumps.
+- No other page, component, or functionality changes.
