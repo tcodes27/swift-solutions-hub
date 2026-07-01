@@ -140,6 +140,13 @@ function Home() {
           </div>
         </div>
       </section>
+
+      <CategoryModal
+        category={activeCategory}
+        open={!!activeCategory}
+        onOpenChange={(o) => !o && setActiveCategory(null)}
+      />
     </PageShell>
   );
 }
+
