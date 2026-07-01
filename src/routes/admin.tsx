@@ -39,14 +39,17 @@ function AdminPage() {
   return (
     <PageShell>
       {/* Header band */}
-      <section className="px-6 pt-8">
+      <section className="mx-auto max-w-7xl px-6 pt-10">
+        <Breadcrumbs items={[{ label: "Admin" }]} />
+      </section>
+      <section className="px-6 pt-4">
         <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-navy p-10 text-navy-foreground md:p-14">
           <svg className="pointer-events-none absolute -right-16 -top-16 h-80 w-80 opacity-15" viewBox="0 0 400 400" fill="none">
             <circle cx="200" cy="200" r="180" stroke="currentColor" strokeDasharray="2 8" />
             <circle cx="200" cy="200" r="120" stroke="currentColor" strokeDasharray="2 8" />
           </svg>
           <p className="text-sm font-medium uppercase tracking-wider text-white/70">Admin dashboard</p>
-          <h1 className="mt-2 font-serif text-5xl md:text-6xl">Knowledge base at a glance.</h1>
+          <h1 className="mt-2 text-4xl font-extrabold tracking-tight md:text-6xl">Knowledge base at a glance.</h1>
           <div className="mt-10 grid grid-cols-2 gap-6 md:grid-cols-4">
             <Kpi icon={<FileText className="h-5 w-5" />} label="Total articles" value={total + drafts} />
             <Kpi icon={<CheckCircle2 className="h-5 w-5" />} label="Published" value={published} />
