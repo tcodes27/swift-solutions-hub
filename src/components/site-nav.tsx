@@ -6,10 +6,10 @@ import { ThemeToggle } from "./theme-toggle";
 const links = [
   { to: "/", label: "Home" },
   { to: "/topics", label: "Browse Topics" },
-  { to: "/popular", label: "Popular Fixes" },
   { to: "/how-it-works", label: "How It Works" },
   { to: "/admin", label: "Admin" },
 ];
+
 
 export function SiteNav() {
   const [scrolled, setScrolled] = useState(false);
