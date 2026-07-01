@@ -221,12 +221,13 @@ export function SearchPanel({
                 </div>
                 <div className="mt-5 flex flex-wrap justify-center gap-2">
                   <Link
-                    to="/popular"
+                    to="/topics"
                     onClick={() => setOpen(false)}
                     className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold transition hover:bg-muted"
                   >
-                    <TrendingUp className="h-3.5 w-3.5" /> Browse popular fixes
+                    <TrendingUp className="h-3.5 w-3.5" /> Browse all topics
                   </Link>
+
                   <Link
                     to="/request"
                     onClick={() => setOpen(false)}

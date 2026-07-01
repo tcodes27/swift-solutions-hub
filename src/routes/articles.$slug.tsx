@@ -455,15 +455,16 @@ function CompletionCard({
             <div className="text-2xl">🎉</div>
             <div className="mt-2 text-lg font-bold">Glad we could help!</div>
             <p className="mt-1 text-sm text-muted-foreground">
-              You can close this page or browse more popular fixes.
+              You can close this page or browse more topics.
             </p>
             <div className="mt-5 flex flex-wrap justify-center gap-2">
               <Link
-                to="/popular"
+                to="/topics"
                 className="rounded-full bg-card border border-border px-4 py-2 text-xs font-semibold transition hover:bg-muted"
               >
-                Browse popular fixes
+                Browse all topics
               </Link>
+
               <button
                 onClick={onRestart}
                 className="rounded-full bg-card border border-border px-4 py-2 text-xs font-semibold transition hover:bg-muted"
