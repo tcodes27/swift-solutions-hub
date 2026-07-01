@@ -29,17 +29,19 @@ function Home() {
     <PageShell>
       {/* Hero */}
       <section className="px-4 pt-6 sm:px-6 sm:pt-8">
-        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-gradient-hero px-6 py-16 text-navy-foreground sm:px-12 md:px-16 md:py-24">
-          {/* decorative rings */}
-          <svg className="pointer-events-none absolute -right-32 -top-32 h-[34rem] w-[34rem] opacity-20" viewBox="0 0 400 400" fill="none" aria-hidden="true">
-            <circle cx="200" cy="200" r="180" stroke="currentColor" strokeDasharray="2 8" />
-            <circle cx="200" cy="200" r="140" stroke="currentColor" strokeDasharray="2 8" />
-            <circle cx="200" cy="200" r="100" stroke="currentColor" strokeDasharray="2 8" />
-            <circle cx="200" cy="200" r="60" stroke="currentColor" strokeDasharray="2 8" />
-          </svg>
-          <div className="pointer-events-none absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-white/5 blur-3xl" aria-hidden="true" />
+        <div className="relative mx-auto max-w-7xl rounded-[2rem] bg-gradient-hero px-6 py-16 text-navy-foreground sm:px-12 md:px-16 md:py-24">
+          {/* decorative background layer */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2rem]" aria-hidden="true">
+            <svg className="absolute -right-32 -top-32 h-[34rem] w-[34rem] opacity-20" viewBox="0 0 400 400" fill="none" aria-hidden="true">
+              <circle cx="200" cy="200" r="180" stroke="currentColor" strokeDasharray="2 8" />
+              <circle cx="200" cy="200" r="140" stroke="currentColor" strokeDasharray="2 8" />
+              <circle cx="200" cy="200" r="100" stroke="currentColor" strokeDasharray="2 8" />
+              <circle cx="200" cy="200" r="60" stroke="currentColor" strokeDasharray="2 8" />
+            </svg>
+            <div className="absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-white/5 blur-3xl" aria-hidden="true" />
+          </div>
 
-          <div className="relative max-w-3xl">
+          <div className="relative z-10 max-w-3xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider backdrop-blur">
               <Sparkles className="h-3.5 w-3.5" /> Internal knowledge base
             </span>
