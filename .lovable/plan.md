@@ -1,76 +1,88 @@
+## Version 2.1 — Refinement & Content Expansion
 
-# IT Support Hub — Build Plan
+Preserves all existing routes, components, and design tokens. Focused on polish, content depth, and navigation completeness.
 
-A modern internal app that helps employees solve common IT issues before opening a ticket. Visual language pulled directly from the uploaded Sprinter Health screenshots: deep indigo navy, vivid Sprinter purple, off-white background, with accent pops (mint, coral, amber) used sparingly on icon tiles like the "Your Sprinter Offer" cards.
+### 1. Global Navigation (`src/components/site-nav.tsx`)
+- Remove `backdrop-blur` / translucent bg. Use solid `bg-background` matching the active theme.
+- Add scroll listener: apply `shadow-soft` + subtle border only after `window.scrollY > 8`.
+- Keep sticky positioning and existing links (unchanged structure).
 
-## Color system (from the screenshots)
+### 2. Back-to-Top button (new `src/components/back-to-top.tsx`)
+- Mounted from `PageShell` so it appears on every route.
+- Listens to scroll; visible when `scrollY / (docHeight - viewport) > 0.4`.
+- Fixed bottom-right, circular, primary color, `animate-fade-in` on show, `hover:scale-110` transition.
+- Click → `window.scrollTo({ top: 0, behavior: 'smooth' })`.
+- Add `scroll-behavior: smooth` to `html` in `src/styles.css`.
 
-Defined as tokens in `src/styles.css` (`@theme inline` + `:root`):
+### 3. Content expansion (`src/data/articles.ts`)
+Rework categories to match the 11 requested groups: Account Access, Devices, Networking, Applications, Security, New Employee Setup, Remote Work, Hardware, Software Requests, Policies, IT Procedures. Preserve existing article slugs where possible (remap categories) so no article link 404s.
 
-- `--background`: warm off-white `#F7F6F2` (the page bg in screenshots)
-- `--foreground`: deep indigo `#1B1145`
-- `--primary`: Sprinter purple `#6B4EFF` (pill buttons, links)
-- `--primary-foreground`: white
-- `--secondary` / hero surface: deep navy `#221A5C` (hero card + dashboard bg)
-- `--accent`: lighter purple `#8E7BFF` (decorative rings, hovers)
-- `--muted`: soft lavender-gray `#EDEAF7`
-- `--card`: white with soft shadow
-- Icon-tile accents (used only on category/benefit tiles, like the offer cards): mint `#3FC9A3`, coral `#FF6B6B`, amber `#FFB547`, sky `#5BB7FF`, pink `#FF8FB1`
-- Soft shadow tokens: `--shadow-card`, `--shadow-card-hover` (low-opacity indigo)
-- Radius: 2xl (matches the rounded pill buttons + rounded cards in the screenshots)
+Add ~5 articles per category (~55 total) using the titles listed in the brief. Each article gets: `title`, `summary`, `overview`, `symptoms`, `estTime`, `difficulty`, `lastUpdated`, `views`, `steps` (4–6 realistic steps), plus new fields `featured?: boolean` and `preview: string` (one-line quick-preview shown on hover).
 
-All values live in one block so they're trivial to retune later.
+### 4. Home page category cards (`src/components/category-tile.tsx`)
+Already has hover lift + icon scale. Enhance:
+- Add `cursor-pointer`, stronger `hover:shadow-lifted`, border-color transition to `primary/60`.
+- Arrow: translate + rotate slightly; icon: scale + subtle rotate; add a soft radial glow via pseudo-element on hover.
+- Ensure focus-visible ring for a11y.
 
-## Typography
+### 5. Browse Topics page (`src/routes/topics.tsx`)
+- Remove `font-serif`, keep SearchPanel-lite filter.
+- Reuse enhanced `CategoryTile` (glow, border accent, arrow slide, icon animation).
+- Add breadcrumb (Home › Browse Topics).
 
-- Headings: **Instrument Serif** (matches the serif display used in "Bringing care to wherever patients call home" and "Your Sprinter Offer").
-- Body / UI: **Inter** (matches body + nav).
-- Loaded via `<link>` in `__root.tsx` head (per Tailwind v4 rule — no remote `@import` in CSS).
-- All copy at ~6th-grade reading level: short sentences, no jargon, every page answers "what do I do next?".
+### 6. Category page (`src/routes/topics.$slug.tsx`) — intermediate article list
+Restructure the page to include:
+- Breadcrumb: Home › Browse Topics › {Category}.
+- Category header (title, description, count).
+- Article search input (local filter).
+- **Featured Articles** row (articles with `featured: true`, fallback to top-viewed 2).
+- **Recently Updated** row (sorted by `lastUpdated` desc, top 3).
+- **Popular Articles** row (sorted by `views` desc, top 3).
+- **All Articles** grid using a new `ArticleCard` component.
 
-## Motion + craft
+### 7. New `src/components/article-card.tsx`
+Reusable card with: category badge, title, summary, `preview` line, `estTime`, `difficulty` pill, `lastUpdated`, arrow icon. Hover: lift, glow shadow, accent border, arrow translate-x, `cursor-pointer`, smooth transitions, focus ring.
 
-- Cards lift on hover (translateY + deeper shadow).
-- Pill buttons scale subtly + arrow nudges right.
-- Skeleton loaders on list pages.
-- Fade/slide-in on scroll for the How It Works workflow (IntersectionObserver).
-- Decorative dashed-arc background motif (echoing the circular dotted rings in the Sprinter hero) used behind the home hero and dashboard header as a subtle SVG.
+Used in: category page, popular page, search results, related lists.
 
-## Routes (TanStack file-based, under `src/routes/`)
+### 8. Breadcrumbs
+Add a small `src/components/breadcrumbs.tsx` (using existing shadcn `breadcrumb.tsx` primitives) and render on: Browse Topics, Category, Article, Popular, Request, Admin, How it Works.
 
-```
-__root.tsx           App shell: top nav (logo + links + "Submit Request" pill CTA) + Outlet
-index.tsx            Home
-topics.tsx           Browse Topics
-topics.$slug.tsx     Category page (article list + search/filter)
-articles.$slug.tsx   Knowledge article (step-by-step + feedback)
-popular.tsx          Popular Fixes
-request.tsx          Submit Documentation Request
-admin.tsx            Admin Dashboard
-how-it-works.tsx     Workflow + behind-the-scenes diagram
-```
+### 9. Article page (`src/routes/articles.$slug.tsx`)
+- Add breadcrumb at top: Home › Browse Topics › {Category} › {Article}.
+- Keep existing interactive walkthrough (unchanged behavior).
+- Add **Previous / Next Article** footer nav — computed from the article's category list order; wraps around at ends or hides at boundaries. Each side shows arrow + article title in a card with hover lift.
 
-Each route sets its own `head()` with unique title + description.
+### 10. Search experience (`src/components/search-panel.tsx`)
+- Enhance result rows to include: title, category badge, difficulty, estTime, short description, keyword highlighting (already present), arrow icon.
+- Make dropdown scrollable (`max-h-[70vh] overflow-y-auto`).
+- **Empty state**: when query yields 0 results, show a friendly illustration block (Lucide `SearchX` in a soft circle) with heading "No matching articles found.", followed by Suggested Articles (top 3 by views), Popular Articles link, and a CTA button to `/request`.
 
-## Page contents
+### 11. Popular page (`src/routes/popular.tsx`)
+Swap ad-hoc rows for the new `ArticleCard`; add breadcrumb; remove serif.
 
-- **Home**: navy hero card with serif headline "IT Support Hub", subtitle, and large centered search ("What do you need help with today?"). 8 category tiles below (Laptop Setup, Wi-Fi & Internet, Passwords & Login, Email, Software, New Employee Setup, Security, Printers & Devices) — each tile uses a colored rounded icon square (purple/mint/coral/amber/sky/pink) like the offer cards, with title, one-line description, and an arrow that nudges on hover. Sections below: Popular Articles, Recently Updated, Quick Tips.
-- **Browse Topics**: same 8 categories as larger cards with article counts + search.
-- **Category page**: article cards (title, summary, est. time, difficulty badge, last updated), client-side search + difficulty/time filter.
-- **Article page** (the hero page): large serif title, overview, common symptoms list, time + difficulty pills. Troubleshooting steps each render as their own card with a numbered purple chip, instruction, illustration placeholder, and a "Next" button that advances/scrolls. Bottom: 🎉 "Did this solve your problem?" with ✅/❌ pill buttons. ❌ reveals a "Submit Zendesk Support Ticket" CTA (placeholder URL, new tab). Separate 👍/👎 "Helpful?" row.
-- **Popular Fixes**: ranked list of most-viewed sample articles with view counts.
-- **Submit Documentation Request**: friendly form (Title, Category, Description, Priority, Submit) → success card with the requested confirmation message.
-- **Admin Dashboard**: navy header band with KPI cards (Total Articles, Published, Needs Review, Drafts) styled like the "Momentum at Scale" stat cards (large serif numbers, label below). Recharts donut for Documentation Health, bar chart for Recently Updated, Recent Activity feed.
-- **How It Works**: vertical workflow with cards connected by arrows, fade/slide-in on scroll. Below: Behind-the-Scenes architecture diagram (Employee → IT Support Hub → Google Sheets → Make.com → Published KB → Future Employees).
+### 12. Animations & micro-interactions
+- Ensure `PageShell` wraps children in `animate-fade-in` (already present) — verify each route benefits.
+- Add loading skeleton utility class usage where lists render (search panel while typing debounce, though data is local so mostly instant — keep skeleton component ready).
+- Standardize transitions to `transition-all duration-300 ease-out` on interactive cards.
 
-## Sample data
+### Files created
+- `src/components/back-to-top.tsx`
+- `src/components/article-card.tsx`
+- `src/components/breadcrumbs.tsx`
 
-Single `src/data/articles.ts` with categories + ~9 articles (Mac won't connect to Wi-Fi, VPN won't connect, Forgot password, Slack login issues, Printer offline, Camera not working, New employee laptop setup, Software installation, Google Workspace access). Each article: slug, category, title, summary, overview, symptoms[], estTime, difficulty, lastUpdated, steps[]. Pages read from this file so adding articles is one place.
+### Files edited
+- `src/data/articles.ts` (major expansion, category remap)
+- `src/components/site-nav.tsx` (opaque + scroll shadow)
+- `src/components/page-shell.tsx` (mount BackToTop)
+- `src/components/category-tile.tsx` (enhanced hover)
+- `src/components/search-panel.tsx` (richer results + empty state)
+- `src/styles.css` (smooth scroll + any new keyframes/glow utility)
+- `src/routes/topics.tsx` (breadcrumb, polish)
+- `src/routes/topics.$slug.tsx` (featured/recent/popular sections, breadcrumb, ArticleCard)
+- `src/routes/articles.$slug.tsx` (breadcrumb, prev/next footer)
+- `src/routes/popular.tsx` (ArticleCard + breadcrumb)
+- `src/routes/request.tsx`, `src/routes/admin.tsx`, `src/routes/how-it-works.tsx` (breadcrumb only)
 
-## Out of scope (for now)
-
-- No backend — form submit + feedback buttons show local confirmation only.
-- No auth — Admin Dashboard is open and uses sample data.
-- No real Zendesk integration — button links to a placeholder URL.
-
-Approve and I'll build it.
+### Out of scope
+No changes to routing structure, theme toggle, admin dashboard logic, or the walkthrough state machine.

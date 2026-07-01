@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { SiteFooter, SiteNav } from "./site-nav";
+import { BackToTop } from "./back-to-top";
 
 export function PageShell({ children }: { children: ReactNode }) {
   return (
@@ -7,6 +8,7 @@ export function PageShell({ children }: { children: ReactNode }) {
       <SiteNav />
       <main className="flex-1 animate-fade-in-up">{children}</main>
       <SiteFooter />
+      <BackToTop />
     </div>
   );
 }

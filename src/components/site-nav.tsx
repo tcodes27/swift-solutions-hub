@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Activity } from "lucide-react";
+import { useEffect, useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
 
 const links = [
@@ -11,8 +12,22 @@ const links = [
 ];
 
 export function SiteNav() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 8);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 glass">
+    <header
+      className={`sticky top-0 z-40 border-b bg-background transition-shadow duration-300 ${
+        scrolled ? "border-border shadow-card" : "border-transparent"
+      }`}
+    >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-6">
         <Link to="/" className="group flex items-center gap-2.5">
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-primary text-primary-foreground shadow-card transition-transform duration-300 group-hover:scale-105 group-hover:rotate-3">

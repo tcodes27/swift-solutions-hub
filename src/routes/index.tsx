@@ -70,7 +70,7 @@ function Home() {
             <div className="mt-12 grid max-w-2xl grid-cols-3 gap-6 border-t border-white/15 pt-8">
               {[
                 { v: "5 min", l: "Avg. resolution" },
-                { v: "9+", l: "Common fixes" },
+                { v: "50+", l: "Common fixes" },
                 { v: "24/7", l: "Self-service" },
               ].map((s) => (
                 <div key={s.l}>
