@@ -20,7 +20,7 @@ function Home() {
     <PageShell>
       {/* Hero */}
       <section className="px-4 pt-6 sm:px-6 sm:pt-8">
-        <div className="relative mx-auto max-w-7xl rounded-[2rem] bg-gradient-hero px-6 py-16 text-navy-foreground sm:px-12 md:px-16 md:py-24">
+        <div className="relative mx-auto max-w-7xl rounded-[2rem] bg-gradient-hero px-6 pt-16 pb-20 text-navy-foreground sm:px-12 md:px-16 md:pt-24 md:pb-28">
           {/* decorative background layer */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2rem]" aria-hidden="true">
             <svg className="absolute -right-32 -top-32 h-[34rem] w-[34rem] opacity-20" viewBox="0 0 400 400" fill="none" aria-hidden="true">
