@@ -75,13 +75,19 @@ export function CategoryModal({
               <Icon className="h-6 w-6" strokeWidth={2.2} />
             </span>
             <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <DialogTitle className="text-xl font-bold tracking-tight">
-                  {category.name}
-                </DialogTitle>
-                <span className="rounded-full bg-primary-soft px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-primary">
-                  {all.length} article{all.length === 1 ? "" : "s"}
-                </span>
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <DialogTitle className="text-xl font-bold tracking-tight">
+                    {category.name}
+                  </DialogTitle>
+                  <span className="rounded-full bg-primary-soft px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-primary">
+                    {all.length} article{all.length === 1 ? "" : "s"}
+                  </span>
+                </div>
+                <DialogClose className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                  <X className="h-5 w-5" />
+                  <span className="sr-only">Close</span>
+                </DialogClose>
               </div>
               <DialogDescription className="mt-1 text-sm text-muted-foreground">
                 {category.description}
