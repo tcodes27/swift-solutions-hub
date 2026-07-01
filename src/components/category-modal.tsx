@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Clock, Search, Sparkles, type LucideIcon } from "lucide-react";
+import { ArrowRight, Clock, Search, Sparkles, X, type LucideIcon } from "lucide-react";
 import * as Icons from "lucide-react";
 import { useMemo, useState, useEffect } from "react";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -64,7 +65,7 @@ export function CategoryModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] gap-0 overflow-hidden rounded-2xl border-border p-0 shadow-lifted sm:max-w-2xl">
+      <DialogContent hideClose className="max-h-[90vh] gap-0 overflow-hidden rounded-2xl border-border p-0 shadow-lifted sm:max-w-2xl">
         {/* Sticky header */}
         <DialogHeader className="sticky top-0 z-10 space-y-0 border-b border-border bg-card px-6 py-5 text-left">
           <div className="flex items-start gap-4">
@@ -74,13 +75,22 @@ export function CategoryModal({
               <Icon className="h-6 w-6" strokeWidth={2.2} />
             </span>
             <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <DialogTitle className="text-xl font-bold tracking-tight">
-                  {category.name}
-                </DialogTitle>
-                <span className="rounded-full bg-primary-soft px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-primary">
-                  {all.length} article{all.length === 1 ? "" : "s"}
-                </span>
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <DialogTitle className="text-xl font-bold tracking-tight">
+                    {category.name}
+                  </DialogTitle>
+                  <span className="rounded-full bg-primary-soft px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-primary">
+                    {all.length} article{all.length === 1 ? "" : "s"}
+                  </span>
+                </div>
+                <DialogClose
+                  aria-label="Close"
+                  className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                >
+                  <X className="h-5 w-5" />
+                  <span className="sr-only">Close</span>
+                </DialogClose>
               </div>
               <DialogDescription className="mt-1 text-sm text-muted-foreground">
                 {category.description}
