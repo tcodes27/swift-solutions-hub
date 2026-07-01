@@ -186,7 +186,7 @@ export function SearchPanel({
             </span>
           </div>
 
-          <div className="py-1">
+          <div className="flex-1 overflow-y-auto py-1">
             {noResults ? (
               <div className="px-6 py-10 text-center animate-fade-in-up">
                 <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-primary-soft text-primary">
