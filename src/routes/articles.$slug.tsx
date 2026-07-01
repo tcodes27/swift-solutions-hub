@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -17,7 +17,8 @@ import {
   X,
 } from "lucide-react";
 import { PageShell } from "@/components/page-shell";
-import { getArticle, getCategory, type Article, type Category } from "@/data/articles";
+import { Breadcrumbs } from "@/components/breadcrumbs";
+import { articlesByCategory, getArticle, getCategory, type Article, type Category } from "@/data/articles";
 
 export const Route = createFileRoute("/articles/$slug")({
   loader: ({ params }) => {
