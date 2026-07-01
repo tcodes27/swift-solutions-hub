@@ -1,12 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { ArrowRight, Sparkles, Zap } from "lucide-react";
+import { ArrowRight, PenLine, Sparkles, Zap } from "lucide-react";
 import { PageShell } from "@/components/page-shell";
-import { CategoryTile } from "@/components/category-tile";
 import { SearchPanel } from "@/components/search-panel";
-import { CategoryModal } from "@/components/category-modal";
-import { categories, type Category } from "@/data/articles";
-
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,11 +16,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
-  const previewCategories = categories.slice(0, 8);
-
   return (
-
     <PageShell>
       {/* Hero */}
       <section className="px-4 pt-6 sm:px-6 sm:pt-8">
@@ -41,7 +32,7 @@ function Home() {
             <div className="absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-white/5 blur-3xl" aria-hidden="true" />
           </div>
 
-          <div className="relative z-10 max-w-3xl">
+          <div className="relative z-10 mx-auto max-w-3xl text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider backdrop-blur">
               <Sparkles className="h-3.5 w-3.5" /> Internal knowledge base
             </span>
@@ -51,29 +42,33 @@ function Home() {
                 before they slow you down.
               </span>
             </h1>
-            <p className="mt-5 max-w-xl text-lg text-white/80">
+            <p className="mx-auto mt-5 max-w-xl text-lg text-white/80">
               Search clear, step-by-step fixes for the most common IT problems. Most issues are solved in under five minutes.
             </p>
 
-            <div className="mt-10">
+            {/* Contained search component */}
+            <div className="mx-auto mt-10 w-full max-w-[760px]">
               <SearchPanel variant="onDark" />
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center gap-2 text-sm text-white/70">
-              <span className="font-medium">Try:</span>
-              {["Wi-Fi", "VPN", "Forgot password", "Printer offline"].map((t) => (
-                <Link
-                  key={t}
-                  to="/topics"
-                  className="rounded-full border border-white/20 bg-white/5 px-3 py-1 transition-all duration-200 hover:bg-white/15 hover:scale-105"
-                >
-                  {t}
-                </Link>
-              ))}
+            {/* CTAs replacing the removed category grid */}
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                to="/topics"
+                className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-navy shadow-card transition hover:shadow-card-hover"
+              >
+                Browse all IT topics <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/request"
+                className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/20"
+              >
+                <PenLine className="h-4 w-4" /> Submit a request
+              </Link>
             </div>
 
             {/* stat strip */}
-            <div className="mt-12 grid max-w-2xl grid-cols-3 gap-6 border-t border-white/15 pt-8">
+            <div className="mx-auto mt-12 grid max-w-2xl grid-cols-3 gap-6 border-t border-white/15 pt-8 text-left">
               {[
                 { v: "5 min", l: "Avg. resolution" },
                 { v: "50+", l: "Common fixes" },
@@ -88,32 +83,6 @@ function Home() {
           </div>
         </div>
       </section>
-
-      {/* Categories */}
-      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
-        <div className="mb-10 flex items-end justify-between gap-6">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-primary">Browse topics</p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight md:text-5xl">Pick a category to get started.</h2>
-          </div>
-          <Link to="/topics" className="hidden items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-primary md:inline-flex">
-            See all topics <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {previewCategories.map((c, i) => (
-            <div key={c.slug} className="animate-fade-in-up" style={{ animationDelay: `${i * 40}ms` }}>
-              <CategoryTile category={c} onSelect={setActiveCategory} />
-            </div>
-          ))}
-        </div>
-        <div className="mt-8 flex justify-center md:hidden">
-          <Link to="/topics" className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-primary">
-            View all topics <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </section>
-
 
       {/* Quick tips */}
       <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6">
@@ -142,13 +111,6 @@ function Home() {
           </div>
         </div>
       </section>
-
-      <CategoryModal
-        category={activeCategory}
-        open={!!activeCategory}
-        onOpenChange={(o) => !o && setActiveCategory(null)}
-      />
     </PageShell>
   );
 }
-
