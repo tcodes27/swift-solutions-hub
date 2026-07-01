@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Check, Send } from "lucide-react";
 import { PageShell } from "@/components/page-shell";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { categories } from "@/data/articles";
 
 export const Route = createFileRoute("/request")({
