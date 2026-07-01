@@ -65,7 +65,7 @@ export function CategoryModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] gap-0 overflow-hidden rounded-2xl border-border p-0 shadow-lifted sm:max-w-2xl">
+      <DialogContent hideClose className="max-h-[90vh] gap-0 overflow-hidden rounded-2xl border-border p-0 shadow-lifted sm:max-w-2xl">
         {/* Sticky header */}
         <DialogHeader className="sticky top-0 z-10 space-y-0 border-b border-border bg-card px-6 py-5 text-left">
           <div className="flex items-start gap-4">
