@@ -57,6 +57,20 @@ export function CategoryTile({
           </p>
         )}
       </div>
+    </>
+  );
+
+  if (onSelect) {
+    return (
+      <button type="button" onClick={() => onSelect(category)} className={className}>
+        {inner}
+      </button>
+    );
+  }
+  return (
+    <Link to="/topics/$slug" params={{ slug: category.slug }} className={className}>
+      {inner}
     </Link>
   );
 }
+
