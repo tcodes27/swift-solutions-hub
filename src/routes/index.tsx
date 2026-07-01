@@ -98,17 +98,29 @@ function Home() {
             <Link
               key={c.to}
               to={c.to}
-              className="group relative flex flex-col overflow-hidden rounded-[1.5rem] border border-border bg-card p-8 shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-card-hover md:p-10"
+              className="group relative flex cursor-pointer flex-col overflow-hidden rounded-[1.5rem] border border-border bg-card p-8 shadow-card transition-all duration-300 ease-out hover:-translate-y-2 hover:border-primary/70 hover:shadow-glow focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/30 md:p-10"
             >
-              <span className={`inline-grid h-14 w-14 place-items-center rounded-2xl ${c.tone} transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
-                <c.icon className="h-7 w-7" />
+              {/* soft glow */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute -inset-px rounded-[1.5rem] bg-gradient-to-br from-primary/10 via-transparent to-mint/20 opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
+              />
+              {/* animated border accent */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-8 top-0 h-[2px] origin-left scale-x-0 rounded-full bg-gradient-to-r from-primary via-primary/60 to-transparent transition-transform duration-500 ease-out group-hover:scale-x-100"
+              />
+              <span
+                className={`relative inline-grid h-14 w-14 place-items-center rounded-2xl ${c.tone} transition-transform duration-300 ease-out group-hover:scale-110 group-hover:-rotate-3`}
+              >
+                <c.icon className="h-7 w-7 transition-transform duration-300 ease-out group-hover:scale-110" />
               </span>
-              <p className="mt-6 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{c.eyebrow}</p>
-              <h3 className="mt-2 text-2xl font-bold tracking-tight md:text-3xl">{c.title}</h3>
-              <p className="mt-3 text-muted-foreground">{c.body}</p>
-              <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary">
+              <p className="relative mt-6 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{c.eyebrow}</p>
+              <h3 className="relative mt-2 text-2xl font-bold tracking-tight md:text-3xl">{c.title}</h3>
+              <p className="relative mt-3 text-muted-foreground">{c.body}</p>
+              <span className="relative mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary transition-all duration-300 ease-out group-hover:gap-3 group-hover:bg-primary group-hover:text-primary-foreground group-hover:shadow-card">
                 {c.cta}
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 ease-out group-hover:translate-x-1" />
               </span>
             </Link>
           ))}
