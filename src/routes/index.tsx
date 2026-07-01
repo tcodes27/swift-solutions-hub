@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BookOpen, PenLine, PlusCircle, Sparkles, Zap } from "lucide-react";
+import { ArrowRight, BookOpen, PlusCircle, Sparkles, Zap } from "lucide-react";
 
 import { PageShell } from "@/components/page-shell";
 import { SearchPanel } from "@/components/search-panel";
