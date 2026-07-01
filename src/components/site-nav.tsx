@@ -6,9 +6,9 @@ import { ThemeToggle } from "./theme-toggle";
 const links = [
   { to: "/", label: "Home" },
   { to: "/topics", label: "Browse Topics" },
-  { to: "/how-it-works", label: "How It Works" },
   { to: "/admin", label: "Admin" },
 ];
+
 
 
 export function SiteNav() {
@@ -73,8 +73,8 @@ export function SiteFooter() {
         <div className="flex gap-6">
           <Link to="/topics" className="transition-colors hover:text-foreground">Topics</Link>
           <Link to="/admin" className="transition-colors hover:text-foreground">Admin</Link>
-          <Link to="/how-it-works" className="transition-colors hover:text-foreground">How it works</Link>
           <Link to="/request" className="transition-colors hover:text-foreground">Submit a request</Link>
+
         </div>
       </div>
     </footer>

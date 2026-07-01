@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TopicsRouteImport } from './routes/topics'
 import { Route as RequestRouteImport } from './routes/request'
-import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TopicsSlugRouteImport } from './routes/topics.$slug'
@@ -25,11 +24,6 @@ const TopicsRoute = TopicsRouteImport.update({
 const RequestRoute = RequestRouteImport.update({
   id: '/request',
   path: '/request',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HowItWorksRoute = HowItWorksRouteImport.update({
-  id: '/how-it-works',
-  path: '/how-it-works',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -56,7 +50,6 @@ const ArticlesSlugRoute = ArticlesSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
-  '/how-it-works': typeof HowItWorksRoute
   '/request': typeof RequestRoute
   '/topics': typeof TopicsRouteWithChildren
   '/articles/$slug': typeof ArticlesSlugRoute
@@ -65,7 +58,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
-  '/how-it-works': typeof HowItWorksRoute
   '/request': typeof RequestRoute
   '/topics': typeof TopicsRouteWithChildren
   '/articles/$slug': typeof ArticlesSlugRoute
@@ -75,7 +67,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
-  '/how-it-works': typeof HowItWorksRoute
   '/request': typeof RequestRoute
   '/topics': typeof TopicsRouteWithChildren
   '/articles/$slug': typeof ArticlesSlugRoute
@@ -86,7 +77,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
-    | '/how-it-works'
     | '/request'
     | '/topics'
     | '/articles/$slug'
@@ -95,7 +85,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
-    | '/how-it-works'
     | '/request'
     | '/topics'
     | '/articles/$slug'
@@ -104,7 +93,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
-    | '/how-it-works'
     | '/request'
     | '/topics'
     | '/articles/$slug'
@@ -114,7 +102,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
-  HowItWorksRoute: typeof HowItWorksRoute
   RequestRoute: typeof RequestRoute
   TopicsRoute: typeof TopicsRouteWithChildren
   ArticlesSlugRoute: typeof ArticlesSlugRoute
@@ -134,13 +121,6 @@ declare module '@tanstack/react-router' {
       path: '/request'
       fullPath: '/request'
       preLoaderRoute: typeof RequestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/how-it-works': {
-      id: '/how-it-works'
-      path: '/how-it-works'
-      fullPath: '/how-it-works'
-      preLoaderRoute: typeof HowItWorksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -188,7 +168,6 @@ const TopicsRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
-  HowItWorksRoute: HowItWorksRoute,
   RequestRoute: RequestRoute,
   TopicsRoute: TopicsRouteWithChildren,
   ArticlesSlugRoute: ArticlesSlugRoute,

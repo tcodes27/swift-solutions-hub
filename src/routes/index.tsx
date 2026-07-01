@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, PenLine, Sparkles, Zap } from "lucide-react";
+import { ArrowRight, BookOpen, PlusCircle, Sparkles, Zap } from "lucide-react";
+
 import { PageShell } from "@/components/page-shell";
 import { SearchPanel } from "@/components/search-panel";
 
@@ -51,21 +52,8 @@ function Home() {
               <SearchPanel variant="onDark" />
             </div>
 
-            {/* CTAs replacing the removed category grid */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link
-                to="/topics"
-                className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-navy shadow-card transition hover:shadow-card-hover"
-              >
-                Browse all IT topics <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/request"
-                className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/20"
-              >
-                <PenLine className="h-4 w-4" /> Submit a request
-              </Link>
-            </div>
+
+
 
             {/* stat strip */}
             <div className="mx-auto mt-12 grid max-w-2xl grid-cols-3 gap-6 border-t border-white/15 pt-8 text-left">
@@ -84,8 +72,52 @@ function Home() {
         </div>
       </section>
 
+      {/* Primary CTA cards */}
+      <section className="mx-auto max-w-7xl px-4 pt-16 sm:px-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {[
+            {
+              to: "/topics",
+              eyebrow: "Browse Knowledge Base",
+              title: "Browse Topics",
+              body: "Explore all IT documentation and troubleshooting guides.",
+              cta: "Browse Topics",
+              icon: BookOpen,
+              tone: "bg-primary-soft text-primary",
+            },
+            {
+              to: "/request",
+              eyebrow: "Need Something New?",
+              title: "Submit a Documentation Request",
+              body: "Can't find what you're looking for? Request new documentation for review.",
+              cta: "Submit Request",
+              icon: PlusCircle,
+              tone: "bg-mint/40 text-navy",
+            },
+          ].map((c) => (
+            <Link
+              key={c.to}
+              to={c.to}
+              className="group relative flex flex-col overflow-hidden rounded-[1.5rem] border border-border bg-card p-8 shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-card-hover md:p-10"
+            >
+              <span className={`inline-grid h-14 w-14 place-items-center rounded-2xl ${c.tone} transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
+                <c.icon className="h-7 w-7" />
+              </span>
+              <p className="mt-6 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{c.eyebrow}</p>
+              <h3 className="mt-2 text-2xl font-bold tracking-tight md:text-3xl">{c.title}</h3>
+              <p className="mt-3 text-muted-foreground">{c.body}</p>
+              <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary">
+                {c.cta}
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* Quick tips */}
       <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6">
+
         <div className="rounded-[2rem] border border-border bg-gradient-soft p-8 md:p-12">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
             <Zap className="h-4 w-4" /> Quick tips
