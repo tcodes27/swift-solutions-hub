@@ -164,8 +164,9 @@ export function SearchPanel({
       {open && (
         <div
           role="listbox"
-          className="absolute left-0 right-0 top-[calc(100%+12px)] z-50 flex max-h-[420px] w-full flex-col overflow-hidden rounded-3xl border border-border bg-popover text-popover-foreground shadow-card-hover animate-scale-in"
+          className="relative mt-3 flex max-h-[360px] w-full flex-col overflow-hidden rounded-3xl border border-border bg-popover text-popover-foreground shadow-card-hover animate-scale-in"
         >
+
           <div className="flex items-center justify-between border-b border-border/60 px-5 py-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
               {showResults ? (
