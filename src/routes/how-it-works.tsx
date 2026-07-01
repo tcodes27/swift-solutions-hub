@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown, BookOpen, Database, FileSearch, Send, Sparkles, Users } from "lucide-react";
 import { PageShell } from "@/components/page-shell";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
