@@ -52,21 +52,8 @@ function Home() {
               <SearchPanel variant="onDark" />
             </div>
 
-            {/* CTAs replacing the removed category grid */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link
-                to="/topics"
-                className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-navy shadow-card transition hover:shadow-card-hover"
-              >
-                Browse all IT topics <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/request"
-                className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/20"
-              >
-                <PenLine className="h-4 w-4" /> Submit a request
-              </Link>
-            </div>
+
+
 
             {/* stat strip */}
             <div className="mx-auto mt-12 grid max-w-2xl grid-cols-3 gap-6 border-t border-white/15 pt-8 text-left">
