@@ -27,9 +27,10 @@ const steps = [
 function HowPage() {
   return (
     <PageShell>
-      <section className="mx-auto max-w-4xl px-6 pt-16 pb-10 text-center">
+      <section className="mx-auto max-w-4xl px-6 pt-10 pb-10 text-center">
+        <div className="text-left"><Breadcrumbs items={[{ label: "How It Works" }]} /></div>
         <p className="text-sm font-medium uppercase tracking-wider text-primary">How it works</p>
-        <h1 className="mt-2 font-serif text-5xl md:text-6xl">From question to published fix.</h1>
+        <h1 className="mt-2 text-4xl font-extrabold tracking-tight md:text-6xl">From question to published fix.</h1>
         <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
           A simple workflow that turns every repeat question into a permanent answer.
         </p>
