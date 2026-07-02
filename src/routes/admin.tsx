@@ -25,6 +25,7 @@ import {
 import { PageShell } from "@/components/page-shell";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { RequestForm } from "@/components/request-form";
+import { AutomationDemo } from "@/components/automation-demo";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { articles, categories } from "@/data/articles";
 import { useInView } from "@/hooks/use-in-view";
