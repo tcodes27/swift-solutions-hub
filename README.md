@@ -38,9 +38,7 @@ Internal knowledge management platform designed to help organizations reduce rep
 
 ## Live Demo
 
-**Coming Soon**
-
-> A production-ready deployment will be linked here once the project is published.
+> i[nternal-it-knowledge-hub.tierrabcodes.workers.dev](https://internal-it-knowledge-hub.tierrabcodes.workers.dev/)
 
 ---
 
