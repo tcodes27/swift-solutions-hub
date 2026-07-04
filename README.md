@@ -230,45 +230,43 @@ src/
 
 ## Current MVP Scope
 
-The current release is a foundational, employee-facing knowledge management experience designed for fast, intuitive self-service and documentation governance. It provides a modern knowledge hub where approved documentation can be organized, searched, and maintained in one place.
+The current release is a foundational, employee-facing knowledge hub for fast self-service and documentation governance. It organizes approved documentation, helps employees search and follow guides, and provides an admin interface for managing content and requests.
 
-Core capabilities included in the MVP:
+Core capabilities include:
 
-- **Modern employee-facing knowledge hub** — A clean, responsive interface that makes it easy for employees to find and follow IT guidance.
-- **Intelligent article search** — Real-time search with suggestions and keyword highlighting to surface relevant articles quickly.
-- **Interactive troubleshooting walkthroughs** — Step-by-step guides that track progress and help employees resolve issues without opening a ticket.
-- **Category-based documentation** — Curated categories covering hardware, software, networking, security, onboarding, and more.
-- **Documentation request workflow** — Employees can submit requests for missing documentation so gaps can be reviewed and filled.
-- **Admin dashboard** — A central hub for analytics, quick actions, and operational overview.
-- **Analytics dashboard (MVP/demo)** — Illustrative metrics and charts that communicate how knowledge health and usage could be tracked.
-- **Documentation workflow visualization** — A conceptual demo showing how requests can move from submission to review and publication.
-- **Responsive design** — Fully optimized for desktop, tablet, and mobile devices.
-- **Light & Dark mode** — Theme-aware UI that respects user preference and reduces eye strain.
-- **Accessibility-focused UI** — Semantic markup, keyboard navigation, focus states, and screen-reader friendly structure.
-- **Enterprise-inspired user experience** — A polished, scalable interface that communicates trust and operational clarity.
+- **Modern employee-facing knowledge hub**
+- **Intelligent article search** with suggestions and keyword highlighting
+- **Interactive troubleshooting walkthroughs** with step-by-step guidance
+- **Category-based documentation** across hardware, software, networking, security, and onboarding
+- **Documentation request workflow** for capturing missing knowledge
+- **Admin dashboard** with analytics and quick actions
+- **MVP analytics dashboard and workflow visualization** showing knowledge health and request-to-publication flow
+- **Responsive design** optimized for desktop, tablet, and mobile
+- **Light & Dark mode** and **accessibility-focused UI**
+- **Enterprise-inspired user experience** designed for clarity and trust
 
-The MVP intentionally focuses on validating the user experience, documentation workflow, and operational processes before expanding into deeper automation and enterprise integrations.
+The MVP intentionally validates the user experience, documentation workflow, and operational processes before expanding into deeper automation and enterprise integrations.
 
 ---
 
 ## Phase 2 — Knowledge Capture Platform
 
-Building on the current MVP, the next phase expands Sprinter IT Hub beyond a documentation hub into a broader knowledge capture platform. The goal is to help organizations capture, organize, operationalize, and maintain institutional knowledge across teams and systems.
+Building on the current MVP, Phase 2 expands Sprinter IT Hub into a broader knowledge capture platform. It will help organizations capture, organize, operationalize, and maintain institutional knowledge across teams and systems.
 
 Future capabilities will include:
 
-- **Importing knowledge from existing business systems** — Centralizing operational knowledge that currently lives in chat threads, support tickets, documents, and other internal tools.
-- **Transforming scattered knowledge into structured documentation** — Converting unstructured, team-specific information into consistent, reusable guidance.
-- **Streamlining review and approval workflows** — Making it easy to validate, refine, and approve knowledge before it becomes official documentation.
-- **Supporting multiple documentation sources** — Allowing knowledge to be gathered from a variety of inputs while maintaining a single, searchable destination.
-- **Reducing manual documentation effort** — Lowering the burden on IT teams and subject-matter experts by simplifying how knowledge is captured and published.
-- **Improving organizational knowledge retention** — Preserving critical operational know-how before it leaves with departing employees or becomes buried in closed systems.
-- **Strengthening employee self-service experiences** — Surfacing the right information at the right time so employees can resolve issues independently.
-- **Providing operational insights into documentation health** — Offering visibility into content gaps, aging articles, and knowledge base usage over time.
+- **Importing knowledge from existing business systems** to centralize scattered information
+- **Transforming scattered knowledge into structured documentation** for consistent reuse
+- **Streamlining review and approval workflows** for validating knowledge before publication
+- **Supporting multiple documentation sources** in a single, searchable destination
+- **Reducing manual documentation effort** by simplifying capture and publishing
+- **Improving organizational knowledge retention** and reducing dependency on individual employees
+- **Strengthening employee self-service experiences** by surfacing the right information at the right time
+- **Providing operational insights into documentation health** with visibility into content gaps and usage
 
 The long-term vision is to establish a single source of truth for organizational knowledge, enabling teams to consistently capture, validate, publish, and maintain critical operational information as the business grows.
 
-> **MVP Note:** The current release represents the foundational MVP focused on delivering an intuitive documentation experience. Future phases will expand the platform's knowledge capture capabilities while maintaining the same simple, scalable user experience.
+> **MVP Note:** The current release delivers an intuitive documentation experience. Future phases will expand knowledge capture capabilities while maintaining the same simple, scalable user experience.
 
 ---
 
