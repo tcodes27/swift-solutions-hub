@@ -1,9 +1,36 @@
 export type Difficulty = "Easy" | "Medium" | "Advanced";
+export type ArticleStatus = "draft" | "in-review" | "published" | "archived";
+export type SourceType = "manual" | "google-sheets" | "google-docs" | "pdf" | "csv" | "zendesk";
 
 export type Step = {
   title: string;
   body: string;
+  // Extended (optional) — used by imported / structured content
+  stepNumber?: number;
+  description?: string;
+  details?: string;
+  estimatedTime?: string;
+  imagePlaceholder?: string;
+  tip?: string;
+  warning?: string;
 };
+
+/** Structured section types supported by the article renderer. */
+export type ArticleSection =
+  | { type: "text"; body: string }
+  | { type: "heading"; text: string }
+  | { type: "subheading"; text: string }
+  | { type: "bulletList"; items: string[] }
+  | { type: "numberedList"; items: string[] }
+  | { type: "callout"; title?: string; body: string }
+  | { type: "warning"; title?: string; body: string }
+  | { type: "tip"; title?: string; body: string }
+  | { type: "checklist"; items: { text: string; checked?: boolean }[] }
+  | { type: "imagePlaceholder"; label?: string; caption?: string }
+  | { type: "codeBlock"; language?: string; code: string }
+  | { type: "table"; headers: string[]; rows: string[][] }
+  | { type: "steps"; steps: Step[] }
+  | { type: "faq"; items: { q: string; a: string }[] };
 
 export type Article = {
   slug: string;
@@ -19,6 +46,17 @@ export type Article = {
   views: number;
   featured?: boolean;
   steps: Step[];
+  // Extended (optional) — Phase 2 schema, backwards compatible
+  id?: string;
+  status?: ArticleStatus;
+  owner?: string;
+  sourceType?: SourceType;
+  sourceUrl?: string;
+  tags?: string[];
+  sections?: ArticleSection[];
+  relatedArticles?: string[]; // slugs
+  helpfulCount?: number;
+  needsImprovementCount?: number;
 };
 
 export type Category = {
@@ -994,4 +1032,81 @@ export function getArticle(slug: string) {
 }
 export function articlesByCategory(slug: string) {
   return articles.filter((a) => a.category === slug);
+}
+
+/**
+ * Represents a raw row from a Google Sheets / CSV import.
+ * `steps_json` and `sections_json` are JSON strings.
+ */
+export type ImportedArticleRow = {
+  id?: string;
+  slug: string;
+  title: string;
+  category: string;
+  summary?: string;
+  overview?: string;
+  symptoms?: string; // comma or newline separated
+  steps_json?: string;
+  sections_json?: string;
+  difficulty?: string;
+  estimated_time?: string;
+  status?: string;
+  owner?: string;
+  source_type?: string;
+  source_url?: string;
+  tags?: string; // comma separated
+  last_updated?: string;
+};
+
+/** Safely parse JSON, returning a fallback on failure. */
+function safeJsonParse<T>(raw: string | undefined, fallback: T): T {
+  if (!raw || !raw.trim()) return fallback;
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed as T;
+  } catch {
+    return fallback;
+  }
+}
+
+function splitList(raw: string | undefined): string[] {
+  if (!raw) return [];
+  return raw
+    .split(/\n|,/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+/** Convert an imported row (e.g. from Google Sheets) into an Article. */
+export function parseImportedArticle(row: ImportedArticleRow): Article {
+  const difficulty = (["Easy", "Medium", "Advanced"] as Difficulty[]).includes(
+    row.difficulty as Difficulty,
+  )
+    ? (row.difficulty as Difficulty)
+    : "Easy";
+
+  const steps = safeJsonParse<Step[]>(row.steps_json, []);
+  const sections = safeJsonParse<ArticleSection[]>(row.sections_json, []);
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    category: row.category,
+    title: row.title,
+    summary: row.summary ?? "",
+    preview: row.summary ?? "",
+    overview: row.overview ?? "",
+    symptoms: splitList(row.symptoms),
+    estTime: row.estimated_time ?? "Varies",
+    difficulty,
+    lastUpdated: row.last_updated ?? "Recently updated",
+    views: 0,
+    steps,
+    sections,
+    status: (row.status as ArticleStatus) ?? "draft",
+    owner: row.owner,
+    sourceType: (row.source_type as SourceType) ?? "manual",
+    sourceUrl: row.source_url,
+    tags: splitList(row.tags),
+  };
 }

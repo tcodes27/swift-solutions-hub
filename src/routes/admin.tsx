@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type ComponentType } from "react";
 import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import {
@@ -8,6 +8,7 @@ import {
   BookOpen,
   CheckCircle2,
   ClipboardCheck,
+  Eye,
   Database,
   FileEdit,
   FilePlus2,
@@ -236,7 +237,29 @@ function AdminPage() {
             tone="bg-coral/30 text-navy"
           />
         </div>
+        <div className="mt-4">
+          <Link
+            to="/admin-preview"
+            className="group flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-dashed border-primary/40 bg-primary-soft/30 px-5 py-4 shadow-card transition-all hover:-translate-y-0.5 hover:bg-primary-soft/60 hover:shadow-card-hover"
+          >
+            <div className="flex items-center gap-3">
+              <span className="grid h-10 w-10 place-items-center rounded-xl bg-card text-primary shadow-card">
+                <Eye className="h-5 w-5" />
+              </span>
+              <div>
+                <div className="text-sm font-bold tracking-tight">Preview imported article</div>
+                <div className="text-xs text-muted-foreground">
+                  See how a Google Sheets / Docs / CSV import renders before publishing.
+                </div>
+              </div>
+            </div>
+            <span className="inline-flex items-center gap-1 rounded-full bg-card px-3 py-1 text-xs font-semibold text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+              Open preview <ArrowRight className="h-3.5 w-3.5" />
+            </span>
+          </Link>
+        </div>
       </section>
+
 
       {/* SECTION 3 — Documentation Workflow */}
       <SectionHeader
