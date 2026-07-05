@@ -739,3 +739,181 @@ function Kpi({ icon, label, value }: { icon: React.ReactNode; label: string; val
     </div>
   );
 }
+
+/* ---------------- Live Documentation Requests ---------------- */
+
+function LiveRequestsSection() {
+  const [state, setState] = useState<
+    | { status: "loading" }
+    | { status: "ready"; data: DocumentationRequest[] }
+    | { status: "error"; message: string }
+  >({ status: "loading" });
+
+  const load = () => {
+    setState({ status: "loading" });
+    getDocumentationRequests()
+      .then((res) => {
+        if (res.success) {
+          const raw = res.data as unknown;
+          // Apps Script may return { requests: [...] } or an array directly.
+          const list = Array.isArray(raw)
+            ? (raw as DocumentationRequest[])
+            : Array.isArray((raw as { requests?: unknown })?.requests)
+              ? ((raw as { requests: DocumentationRequest[] }).requests)
+              : [];
+          setState({ status: "ready", data: list });
+        } else {
+          setState({ status: "error", message: res.message });
+        }
+      })
+      .catch(() =>
+        setState({
+          status: "error",
+          message: "Unable to load requests. Please try again.",
+        }),
+      );
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  return (
+    <section className="mx-auto max-w-7xl px-6">
+      <div className="rounded-2xl bg-card p-6 shadow-card md:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="font-serif text-2xl">Submitted requests</div>
+            <p className="text-sm text-muted-foreground">
+              Live from Google Apps Script · Documentation_Requests sheet.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={load}
+            disabled={state.status === "loading"}
+            className="rounded-full bg-primary-soft px-4 py-2 text-xs font-semibold text-primary transition hover:bg-primary hover:text-primary-foreground disabled:opacity-60"
+          >
+            {state.status === "loading" ? "Refreshing…" : "Refresh"}
+          </button>
+        </div>
+
+        <div className="mt-6">
+          {state.status === "loading" && (
+            <div className="grid gap-3">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="h-24 animate-pulse rounded-xl border border-border/60 bg-muted/40"
+                />
+              ))}
+            </div>
+          )}
+
+          {state.status === "error" && (
+            <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-5 text-sm">
+              <div className="font-semibold text-destructive">Couldn&rsquo;t load requests</div>
+              <p className="mt-1 text-muted-foreground">{state.message}</p>
+              <button
+                type="button"
+                onClick={load}
+                className="mt-3 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground transition hover:bg-primary/90"
+              >
+                Try again
+              </button>
+            </div>
+          )}
+
+          {state.status === "ready" && state.data.length === 0 && (
+            <div className="rounded-xl border border-dashed border-border bg-surface/60 p-8 text-center">
+              <div className="font-serif text-xl">No requests yet</div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Submissions from the request form will show up here.
+              </p>
+            </div>
+          )}
+
+          {state.status === "ready" && state.data.length > 0 && (
+            <ul className="grid gap-3">
+              {state.data.map((r, idx) => (
+                <RequestRow key={String(r.id ?? idx)} req={r} />
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function RequestRow({ req }: { req: DocumentationRequest }) {
+  const r = req as Record<string, unknown>;
+  const id = String(r.id ?? r.request_id ?? r.requestId ?? "—");
+  const title = String(r.title ?? "Untitled");
+  const category = String(r.category ?? "—");
+  const priority = String(r.priority ?? "Normal");
+  const status = String(r.status ?? "new");
+  const submittedBy = String(r.submitted_by ?? r.submittedBy ?? "anonymous");
+  const createdAt = String(r.created_at ?? r.createdAt ?? "");
+  const description = String(r.description ?? "");
+  const preview =
+    description.length > 180 ? description.slice(0, 180).trimEnd() + "…" : description;
+
+  const priorityTone =
+    priority.toLowerCase() === "high"
+      ? "bg-coral/30 text-navy"
+      : priority.toLowerCase() === "low"
+        ? "bg-muted text-foreground/70"
+        : "bg-amber/30 text-navy";
+
+  return (
+    <li className="rounded-xl border border-border/60 bg-surface/60 p-5 transition hover:border-primary/40 hover:bg-surface">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <span className="rounded-full bg-muted px-2 py-0.5 font-mono">{id}</span>
+            <span>·</span>
+            <span>{category}</span>
+            {createdAt && (
+              <>
+                <span>·</span>
+                <span>{formatDate(createdAt)}</span>
+              </>
+            )}
+          </div>
+          <div className="mt-1.5 truncate font-semibold">{title}</div>
+          {preview && (
+            <p className="mt-1 text-sm text-muted-foreground">{preview}</p>
+          )}
+          <div className="mt-2 text-xs text-muted-foreground">
+            Submitted by <span className="font-medium text-foreground">{submittedBy}</span>
+          </div>
+        </div>
+        <div className="flex shrink-0 flex-col items-end gap-2">
+          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${priorityTone}`}>
+            {priority}
+          </span>
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary capitalize">
+              {status}
+            </span>
+            <select
+              disabled
+              title="Coming next"
+              className="cursor-not-allowed rounded-full border border-border bg-background px-2 py-1 text-xs text-muted-foreground opacity-70"
+            >
+              <option>Coming next</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </li>
+  );
+}
+
+function formatDate(value: string): string {
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return value;
+  return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+}
+
