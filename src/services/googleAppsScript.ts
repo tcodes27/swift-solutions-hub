@@ -88,8 +88,6 @@ async function postToAppsScript<TResponse = unknown, TPayload = unknown>(
         // cause a 405. The body is still JSON-encoded and parsed server-side.
         "Content-Type": "text/plain;charset=utf-8",
       },
-      // but application/json is the correct semantic content-type for our
-      // structured payloads. Keep it explicit.
       body: JSON.stringify(body),
     });
 
