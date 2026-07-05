@@ -20,8 +20,10 @@ export type ApiResult<T = unknown> =
 /** Known Apps Script actions. Extend as more endpoints are added. */
 export type AppsScriptAction =
   | "submitDocumentationRequest"
+  | "submit_request"
   | "getDocumentationRequests"
   | "updateDocumentationRequestStatus"
+  | "update_request_status"
   | "submitArticleFeedback";
 
 interface AppsScriptPayload<TPayload = unknown> {
@@ -45,12 +47,16 @@ export interface DocumentationRequest extends DocumentationRequestInput {
   updatedAt?: string;
 }
 
-export type DocumentationRequestStatus =
-  | "new"
-  | "in-review"
-  | "approved"
-  | "published"
-  | "rejected";
+export const DOCUMENTATION_REQUEST_STATUSES = [
+  "New",
+  "In Review",
+  "Drafting",
+  "Approved",
+  "Published",
+  "Archived",
+] as const;
+
+export type DocumentationRequestStatus = (typeof DOCUMENTATION_REQUEST_STATUSES)[number];
 
 export interface ArticleFeedbackInput {
   articleSlug: string;
@@ -123,8 +129,9 @@ export function updateDocumentationRequestStatus(
   requestId: string,
   status: DocumentationRequestStatus,
 ): Promise<ApiResult<{ id: string; status: DocumentationRequestStatus }>> {
-  return postToAppsScript("updateDocumentationRequestStatus", {
-    requestId,
+  return postToAppsScript("update_request_status", {
+    action: "update_request_status",
+    request_id: requestId,
     status,
   });
 }

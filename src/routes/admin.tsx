@@ -1,6 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState, type ComponentType } from "react";
-import { getDocumentationRequests, type DocumentationRequest } from "@/services/googleAppsScript";
+import {
+  getDocumentationRequests,
+  updateDocumentationRequestStatus,
+  DOCUMENTATION_REQUEST_STATUSES,
+  type DocumentationRequest,
+  type DocumentationRequestStatus,
+} from "@/services/googleAppsScript";
+import { Loader2, X, CheckCircle, AlertCircle } from "lucide-react";
 import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import {
   Activity,
@@ -749,13 +756,19 @@ function LiveRequestsSection() {
     | { status: "error"; message: string }
   >({ status: "loading" });
 
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [modal, setModal] = useState<
+    | null
+    | { kind: "success"; message: string }
+    | { kind: "error"; message: string }
+  >(null);
+
   const load = () => {
     setState({ status: "loading" });
     getDocumentationRequests()
       .then((res) => {
         if (res.success) {
           const raw = res.data as unknown;
-          // Apps Script may return { requests: [...] } or an array directly.
           const list = Array.isArray(raw)
             ? (raw as DocumentationRequest[])
             : Array.isArray((raw as { requests?: unknown })?.requests)
@@ -777,6 +790,49 @@ function LiveRequestsSection() {
   useEffect(() => {
     load();
   }, []);
+
+  const handleStatusChange = async (
+    requestId: string,
+    nextStatus: DocumentationRequestStatus,
+  ) => {
+    if (!requestId || requestId === "—") {
+      setModal({
+        kind: "error",
+        message: "This request is missing an ID and can't be updated.",
+      });
+      return;
+    }
+    setUpdatingId(requestId);
+    try {
+      const res = await updateDocumentationRequestStatus(requestId, nextStatus);
+      if (res.success) {
+        // Optimistically update local state
+        setState((prev) =>
+          prev.status === "ready"
+            ? {
+                status: "ready",
+                data: prev.data.map((r) => {
+                  const rid = String(
+                    (r as Record<string, unknown>).id ??
+                      (r as Record<string, unknown>).request_id ??
+                      (r as Record<string, unknown>).requestId ??
+                      "",
+                  );
+                  return rid === requestId ? { ...r, status: nextStatus } : r;
+                }),
+              }
+            : prev,
+        );
+        setModal({ kind: "success", message: "Request status updated." });
+      } else {
+        setModal({ kind: "error", message: res.message || "Something went wrong. Please try again." });
+      }
+    } catch {
+      setModal({ kind: "error", message: "Something went wrong. Please try again." });
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
   return (
     <section className="mx-auto max-w-7xl px-6">
@@ -835,24 +891,103 @@ function LiveRequestsSection() {
 
           {state.status === "ready" && state.data.length > 0 && (
             <ul className="grid gap-3">
-              {state.data.map((r, idx) => (
-                <RequestRow key={String(r.id ?? idx)} req={r} />
-              ))}
+              {state.data.map((r, idx) => {
+                const rid = String(
+                  (r as Record<string, unknown>).id ??
+                    (r as Record<string, unknown>).request_id ??
+                    (r as Record<string, unknown>).requestId ??
+                    idx,
+                );
+                return (
+                  <RequestRow
+                    key={rid}
+                    req={r}
+                    updating={updatingId === rid}
+                    onStatusChange={(s) => handleStatusChange(rid, s)}
+                  />
+                );
+              })}
             </ul>
           )}
         </div>
       </div>
+
+      {modal && <StatusUpdateModal state={modal} onClose={() => setModal(null)} />}
     </section>
   );
 }
 
-function RequestRow({ req }: { req: DocumentationRequest }) {
+function StatusUpdateModal({
+  state,
+  onClose,
+}: {
+  state: { kind: "success"; message: string } | { kind: "error"; message: string };
+  onClose: () => void;
+}) {
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 animate-fade-in"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-md animate-scale-in rounded-2xl bg-card p-8 shadow-card-hover"
+      >
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-4 top-4 rounded-full p-1.5 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+        >
+          <X className="h-4 w-4" />
+        </button>
+        {state.kind === "success" ? (
+          <>
+            <div className="grid h-12 w-12 place-items-center rounded-full bg-mint text-navy">
+              <CheckCircle className="h-6 w-6" />
+            </div>
+            <h2 className="mt-5 font-serif text-2xl">Status updated</h2>
+            <p className="mt-2 text-muted-foreground">{state.message}</p>
+          </>
+        ) : (
+          <>
+            <div className="grid h-12 w-12 place-items-center rounded-full bg-destructive/10 text-destructive">
+              <AlertCircle className="h-6 w-6" />
+            </div>
+            <h2 className="mt-5 font-serif text-2xl">Update failed</h2>
+            <p className="mt-2 text-muted-foreground">{state.message}</p>
+          </>
+        )}
+        <div className="mt-6">
+          <button
+            onClick={onClose}
+            className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RequestRow({
+  req,
+  updating,
+  onStatusChange,
+}: {
+  req: DocumentationRequest;
+  updating: boolean;
+  onStatusChange: (status: DocumentationRequestStatus) => void;
+}) {
   const r = req as Record<string, unknown>;
   const id = String(r.id ?? r.request_id ?? r.requestId ?? "—");
   const title = String(r.title ?? "Untitled");
   const category = String(r.category ?? "—");
   const priority = String(r.priority ?? "Normal");
-  const status = String(r.status ?? "new");
+  const rawStatus = String(r.status ?? "New");
+  const status = normalizeStatus(rawStatus);
   const submittedBy = String(r.submitted_by ?? r.submittedBy ?? "anonymous");
   const createdAt = String(r.created_at ?? r.createdAt ?? "");
   const description = String(r.description ?? "");
@@ -882,9 +1017,7 @@ function RequestRow({ req }: { req: DocumentationRequest }) {
             )}
           </div>
           <div className="mt-1.5 truncate font-semibold">{title}</div>
-          {preview && (
-            <p className="mt-1 text-sm text-muted-foreground">{preview}</p>
-          )}
+          {preview && <p className="mt-1 text-sm text-muted-foreground">{preview}</p>}
           <div className="mt-2 text-xs text-muted-foreground">
             Submitted by <span className="font-medium text-foreground">{submittedBy}</span>
           </div>
@@ -894,16 +1027,29 @@ function RequestRow({ req }: { req: DocumentationRequest }) {
             {priority}
           </span>
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary capitalize">
+            <span className="rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
               {status}
             </span>
-            <select
-              disabled
-              title="Coming next"
-              className="cursor-not-allowed rounded-full border border-border bg-background px-2 py-1 text-xs text-muted-foreground opacity-70"
-            >
-              <option>Coming next</option>
-            </select>
+            <div className="relative">
+              <select
+                value={status}
+                disabled={updating}
+                onChange={(e) =>
+                  onStatusChange(e.target.value as DocumentationRequestStatus)
+                }
+                aria-label="Update request status"
+                className="cursor-pointer rounded-full border border-border bg-background px-3 py-1 pr-7 text-xs font-medium text-foreground transition hover:border-primary/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:cursor-wait disabled:opacity-60"
+              >
+                {DOCUMENTATION_REQUEST_STATUSES.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+              {updating && (
+                <Loader2 className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 animate-spin text-primary" />
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -911,9 +1057,17 @@ function RequestRow({ req }: { req: DocumentationRequest }) {
   );
 }
 
+function normalizeStatus(value: string): DocumentationRequestStatus {
+  const match = DOCUMENTATION_REQUEST_STATUSES.find(
+    (s) => s.toLowerCase() === value.toLowerCase().trim(),
+  );
+  return match ?? "New";
+}
+
 function formatDate(value: string): string {
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return value;
   return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
 }
+
 
