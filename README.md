@@ -228,6 +228,39 @@ src/
 
 ---
 
+## Environment Configuration
+
+The frontend connects to a Google Apps Script Web App for Phase 1.5 backend
+connectivity. The endpoint URL is provided through an environment variable
+so it can be changed without modifying application code.
+
+**Setup:**
+
+1. Copy the example env file to a local override:
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+2. Open `.env.local` and set the deployed Apps Script Web App URL:
+
+   ```env
+   VITE_GOOGLE_APPS_SCRIPT_URL=https://script.google.com/macros/s/xxxxxxxxxxxxxxxxxxxxxxxx/exec
+   ```
+
+3. Restart the development server so Vite picks up the new value.
+
+`.env.local` is git-ignored via the `*.local` rule and must never be
+committed. All backend traffic is routed through
+`src/services/googleAppsScript.ts`; if the variable is missing, the service
+returns a friendly error instead of crashing the app.
+
+See [`docs/developer/environment.md`](docs/developer/environment.md) for
+deployment details, action reference, and security notes.
+
+---
+
+
 ## Current MVP Scope
 
 The current release is a foundational, employee-facing knowledge hub for fast self-service and documentation governance. It organizes approved documentation, helps employees search and follow guides, and provides an admin interface for managing content and requests.
