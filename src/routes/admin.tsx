@@ -200,6 +200,14 @@ function AdminPage() {
         </div>
       </section>
 
+      {/* SECTION 1.5 — Live Documentation Requests */}
+      <SectionHeader
+        eyebrow="Section 1.5 · Live"
+        title="Documentation requests"
+        description="Requests submitted through the form, pulled live from the Documentation_Requests sheet."
+      />
+      <LiveRequestsSection />
+
       {/* SECTION 2 — Quick Actions */}
       <SectionHeader
         eyebrow="Section 2"
