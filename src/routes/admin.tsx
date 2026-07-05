@@ -429,6 +429,15 @@ function AdminPage() {
       </section>
 
 
+      {/* SECTION 2.5 — Knowledge Capture */}
+      <SectionHeader
+        eyebrow="Section 2.5 · Phase 2 preview"
+        title="Knowledge capture"
+        description="Capture organizational knowledge from manual submissions, business documents, and connected systems. Imported content is prepared as draft documentation before entering the review and publishing workflow."
+      />
+      <KnowledgeCaptureSection onManualCapture={() => setModal("submit")} />
+
+
       {/* SECTION 3 — Documentation Workflow */}
       <SectionHeader
         eyebrow="Section 3"
