@@ -83,10 +83,11 @@ async function postToAppsScript<TResponse = unknown, TPayload = unknown>(
     const response = await fetch(API_URL, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+        // Use text/plain to avoid triggering a CORS preflight (OPTIONS) request.
+        // Apps Script Web Apps do not respond to OPTIONS, so JSON content-types
+        // cause a 405. The body is still JSON-encoded and parsed server-side.
+        "Content-Type": "text/plain;charset=utf-8",
       },
-      // Apps Script Web Apps typically don't preflight when using text/plain,
       // but application/json is the correct semantic content-type for our
       // structured payloads. Keep it explicit.
       body: JSON.stringify(body),
