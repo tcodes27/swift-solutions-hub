@@ -14,22 +14,34 @@ import {
   ArrowRight,
   BarChart3,
   BookOpen,
+  Bot,
   CheckCircle2,
   ClipboardCheck,
+  Copy,
   Eye,
   Database,
   FileEdit,
   FilePlus2,
   FileSearch,
+  FileSpreadsheet,
   FileText,
+  FileType,
+  FolderTree,
+  Layers,
+  Mail,
   MessageSquare,
   PencilLine,
   PlusCircle,
   Search,
   Send,
   Sparkles,
+  Table as TableIcon,
+  Tag,
   TrendingUp,
+  Upload,
   Users,
+  Wand2,
+  Zap,
 } from "lucide-react";
 import { PageShell } from "@/components/page-shell";
 import { Breadcrumbs } from "@/components/breadcrumbs";
@@ -74,7 +86,147 @@ const bestPractices = [
   "Always verify technical accuracy.",
 ];
 
+const captureSources: CaptureItem[] = [
+  {
+    key: "manual",
+    title: "Manual Capture",
+    description: "Submit a documentation request directly from your team.",
+    fileType: "Available now",
+    icon: PencilLine,
+    tone: "bg-primary-soft text-primary",
+    available: true,
+  },
+  {
+    key: "pdf",
+    title: "Upload PDF",
+    description: "Import existing PDF runbooks and reference docs.",
+    fileType: "PDF · .pdf",
+    icon: FileText,
+    tone: "bg-coral/30 text-navy",
+  },
+  {
+    key: "word",
+    title: "Upload Word Document",
+    description: "Bring in Word documents authored by IT and Ops.",
+    fileType: "Word · .docx",
+    icon: FileType,
+    tone: "bg-info/30 text-navy",
+  },
+  {
+    key: "excel",
+    title: "Upload Excel Spreadsheet",
+    description: "Extract structured knowledge from Excel workbooks.",
+    fileType: "Excel · .xlsx",
+    icon: FileSpreadsheet,
+    tone: "bg-mint/40 text-navy",
+  },
+  {
+    key: "csv",
+    title: "Upload CSV",
+    description: "Bulk import tabular knowledge from CSV exports.",
+    fileType: "CSV · .csv",
+    icon: TableIcon,
+    tone: "bg-amber/40 text-navy",
+  },
+];
+
+const connectedSystems: CaptureItem[] = [
+  {
+    key: "gdocs",
+    title: "Google Docs",
+    description: "Sync existing Google Docs directly into the hub.",
+    fileType: "Google Workspace",
+    icon: FileText,
+    tone: "bg-info/30 text-navy",
+  },
+  {
+    key: "gsheets",
+    title: "Google Sheets",
+    description: "Import structured content from Google Sheets.",
+    fileType: "Google Workspace",
+    icon: FileSpreadsheet,
+    tone: "bg-mint/40 text-navy",
+  },
+  {
+    key: "zendesk",
+    title: "Zendesk Export",
+    description: "Turn resolved tickets into reusable knowledge.",
+    fileType: "Zendesk · export",
+    icon: MessageSquare,
+    tone: "bg-amber/40 text-navy",
+  },
+  {
+    key: "gmail",
+    title: "Gmail",
+    description: "Capture recurring answers hidden inside email threads.",
+    fileType: "Google Workspace",
+    icon: Mail,
+    tone: "bg-coral/30 text-navy",
+  },
+  {
+    key: "slack",
+    title: "Slack",
+    description: "Promote high-signal Slack answers into documentation.",
+    fileType: "Slack · workspace",
+    icon: Zap,
+    tone: "bg-primary-soft text-primary",
+  },
+];
+
+const aiProcessing: CaptureItem[] = [
+  {
+    key: "extract",
+    title: "Extract Procedures",
+    description: "Detect step-by-step procedures inside imported files.",
+    fileType: "AI · extraction",
+    icon: Wand2,
+    tone: "bg-primary-soft text-primary",
+  },
+  {
+    key: "generate",
+    title: "Generate Knowledge Article",
+    description: "Draft polished KB articles from raw source content.",
+    fileType: "AI · drafting",
+    icon: Sparkles,
+    tone: "bg-info/30 text-navy",
+  },
+  {
+    key: "duplicate",
+    title: "Detect Duplicate Documentation",
+    description: "Flag near-duplicate articles before they clutter the hub.",
+    fileType: "AI · deduplication",
+    icon: Copy,
+    tone: "bg-coral/30 text-navy",
+  },
+  {
+    key: "categories",
+    title: "Suggest Categories",
+    description: "Recommend the best category based on article content.",
+    fileType: "AI · classification",
+    icon: FolderTree,
+    tone: "bg-mint/40 text-navy",
+  },
+  {
+    key: "tags",
+    title: "Recommend Tags",
+    description: "Auto-suggest relevant tags to improve discoverability.",
+    fileType: "AI · tagging",
+    icon: Tag,
+    tone: "bg-amber/40 text-navy",
+  },
+];
+
 type ModalKind = "submit" | "edit" | "create" | "analytics" | null;
+
+type CaptureItem = {
+  key: string;
+  title: string;
+  description: string;
+  fileType: string;
+  icon: ComponentType<{ className?: string }>;
+  tone: string;
+  available?: boolean;
+};
 
 function AdminPage() {
   const [modal, setModal] = useState<ModalKind>(null);
@@ -275,6 +427,15 @@ function AdminPage() {
           </Link>
         </div>
       </section>
+
+
+      {/* SECTION 2.5 — Knowledge Capture */}
+      <SectionHeader
+        eyebrow="Section 2.5 · Phase 2 preview"
+        title="Knowledge capture"
+        description="Capture organizational knowledge from manual submissions, business documents, and connected systems. Imported content is prepared as draft documentation before entering the review and publishing workflow."
+      />
+      <KnowledgeCaptureSection onManualCapture={() => setModal("submit")} />
 
 
       {/* SECTION 3 — Documentation Workflow */}
@@ -1070,4 +1231,233 @@ function formatDate(value: string): string {
   return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
 }
 
+
+/* ---------------- Knowledge Capture ---------------- */
+
+function KnowledgeCaptureSection({ onManualCapture }: { onManualCapture: () => void }) {
+  const [active, setActive] = useState<CaptureItem | null>(null);
+
+  const handleClick = (item: CaptureItem) => {
+    if (item.available && item.key === "manual") {
+      onManualCapture();
+      return;
+    }
+    setActive(item);
+  };
+
+  return (
+    <section className="mx-auto max-w-7xl px-6">
+      <div className="space-y-8">
+        <CaptureGroup
+          eyebrow="Capture sources"
+          title="Bring in existing documents"
+          items={captureSources}
+          onSelect={handleClick}
+          icon={Upload}
+        />
+        <CaptureGroup
+          eyebrow="Connected systems"
+          title="Sync from tools your team already uses"
+          items={connectedSystems}
+          onSelect={handleClick}
+          icon={Database}
+        />
+        <CaptureGroup
+          eyebrow="AI processing"
+          title="Transform raw content into polished knowledge"
+          items={aiProcessing}
+          onSelect={handleClick}
+          icon={Bot}
+        />
+      </div>
+
+      <CapturePreviewModal item={active} onClose={() => setActive(null)} />
+    </section>
+  );
+}
+
+function CaptureGroup({
+  eyebrow,
+  title,
+  items,
+  onSelect,
+  icon: Icon,
+}: {
+  eyebrow: string;
+  title: string;
+  items: CaptureItem[];
+  onSelect: (item: CaptureItem) => void;
+  icon: ComponentType<{ className?: string }>;
+}) {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-6 shadow-card md:p-8">
+      <div className="flex items-start gap-3">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary">
+          <Icon className="h-5 w-5" />
+        </span>
+        <div>
+          <div className="text-xs font-semibold uppercase tracking-wider text-primary">{eyebrow}</div>
+          <h3 className="mt-0.5 text-xl font-bold tracking-tight md:text-2xl">{title}</h3>
+        </div>
+      </div>
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {items.map((item) => (
+          <CaptureCard key={item.key} item={item} onClick={() => onSelect(item)} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CaptureCard({ item, onClick }: { item: CaptureItem; onClick: () => void }) {
+  const Icon = item.icon;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border p-5 text-left shadow-card transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/30 ${
+        item.available
+          ? "border-primary/40 bg-primary-soft/40 hover:border-primary"
+          : "border-border bg-surface hover:border-primary/60"
+      }`}
+    >
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-5 top-0 h-[2px] origin-left scale-x-0 rounded-full bg-gradient-to-r from-primary via-primary/60 to-transparent transition-transform duration-500 ease-out group-hover:scale-x-100"
+      />
+      <div className="flex items-start justify-between gap-3">
+        <span
+          className={`inline-grid h-11 w-11 place-items-center rounded-xl ${item.tone} transition-transform duration-300 ease-out group-hover:scale-110 group-hover:-rotate-3`}
+        >
+          <Icon className="h-5 w-5" />
+        </span>
+        {item.available ? (
+          <span className="rounded-full bg-mint/40 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-navy">
+            Available
+          </span>
+        ) : (
+          <span className="rounded-full bg-amber/40 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-navy">
+            Coming in Phase 2
+          </span>
+        )}
+      </div>
+      <div className="mt-4 text-sm font-bold tracking-tight">{item.title}</div>
+      <p className="mt-1 text-xs text-muted-foreground">{item.description}</p>
+      <div className="mt-4 flex items-center justify-between border-t border-border/60 pt-3 text-[11px] text-muted-foreground">
+        <span className="font-medium">{item.fileType}</span>
+        <span className="inline-flex items-center gap-1 font-semibold text-primary transition-transform duration-300 group-hover:translate-x-0.5">
+          {item.available ? "Open" : "Preview"} <ArrowRight className="h-3 w-3" />
+        </span>
+      </div>
+    </button>
+  );
+}
+
+function CapturePreviewModal({
+  item,
+  onClose,
+}: {
+  item: CaptureItem | null;
+  onClose: () => void;
+}) {
+  const Icon = item?.icon ?? Layers;
+  const isFileUpload = item?.key === "csv" || item?.key === "excel";
+  const flow = [
+    { icon: Upload, label: "Upload or connect source" },
+    { icon: Wand2, label: "Extract knowledge" },
+    { icon: FileEdit, label: "Create draft article" },
+    { icon: ClipboardCheck, label: "Admin reviews" },
+    { icon: BookOpen, label: "Publish to Knowledge Hub" },
+  ];
+
+  return (
+    <Dialog open={!!item} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="max-h-[90vh] w-[95vw] max-w-2xl overflow-hidden rounded-2xl border-border p-0 shadow-card-hover">
+        <DialogHeader className="sticky top-0 z-10 flex-row items-start gap-3 space-y-0 border-b border-border bg-card/95 px-6 py-4 backdrop-blur">
+          <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${item?.tone ?? "bg-primary-soft text-primary"}`}>
+            <Icon className="h-5 w-5" />
+          </span>
+          <div className="min-w-0 flex-1 pr-8 text-left">
+            <DialogTitle className="text-lg font-bold tracking-tight">
+              {item?.title ?? "Knowledge capture"}
+            </DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground">
+              {item?.description ?? ""}
+            </DialogDescription>
+          </div>
+        </DialogHeader>
+        <div className="max-h-[calc(90vh-5rem)] overflow-y-auto px-6 py-6">
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-amber/40 px-3 py-1 text-xs font-semibold text-navy">
+              Coming in Phase 2
+            </span>
+            <span className="text-xs text-muted-foreground">{item?.fileType}</span>
+          </div>
+
+          <div className="mt-5 rounded-xl border border-border bg-surface p-4 text-sm text-muted-foreground">
+            Import processing is planned for Phase 2. This MVP currently supports manual documentation
+            requests. Here&rsquo;s the future workflow this capture source will follow.
+          </div>
+
+          <ol className="mt-6 space-y-2">
+            {flow.map((step, i) => {
+              const StepIcon = step.icon;
+              const last = i === flow.length - 1;
+              return (
+                <li key={step.label} className="flex items-center gap-3">
+                  <div className="flex flex-1 items-center gap-3 rounded-xl border border-border/70 bg-card px-4 py-3">
+                    <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary-soft text-primary">
+                      <StepIcon className="h-4 w-4" />
+                    </span>
+                    <div className="min-w-0">
+                      <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        Step {i + 1}
+                      </div>
+                      <div className="text-sm font-semibold leading-tight">{step.label}</div>
+                    </div>
+                  </div>
+                  {!last && <ArrowRight className="h-4 w-4 shrink-0 text-primary/60" aria-hidden="true" />}
+                </li>
+              );
+            })}
+          </ol>
+
+          {isFileUpload && (
+            <div className="mt-6 rounded-xl border border-dashed border-border bg-surface/60 p-5">
+              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                File input preview
+              </div>
+              <label className="mt-3 flex cursor-not-allowed flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-background px-4 py-8 text-center opacity-70">
+                <Upload className="h-6 w-6 text-primary" />
+                <span className="text-sm font-medium">Drop your file here or click to browse</span>
+                <span className="text-xs text-muted-foreground">
+                  {item?.key === "csv" ? "Accepts .csv" : "Accepts .xlsx"}
+                </span>
+                <input
+                  type="file"
+                  disabled
+                  accept={item?.key === "csv" ? ".csv" : ".xlsx"}
+                  className="hidden"
+                />
+              </label>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Processing is disabled in the MVP.
+              </p>
+            </div>
+          )}
+
+          <div className="mt-6 flex justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/30"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
