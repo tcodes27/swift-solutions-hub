@@ -974,9 +974,9 @@ function LiveRequestsSection() {
                 status: "ready",
                 data: prev.data.map((r) => {
                   const rid = String(
-                    (r as Record<string, unknown>).id ??
-                      (r as Record<string, unknown>).request_id ??
-                      (r as Record<string, unknown>).requestId ??
+                    (r as unknown as Record<string, unknown>).id ??
+                      (r as unknown as Record<string, unknown>).request_id ??
+                      (r as unknown as Record<string, unknown>).requestId ??
                       "",
                   );
                   return rid === requestId ? { ...r, status: nextStatus } : r;
@@ -1054,9 +1054,9 @@ function LiveRequestsSection() {
             <ul className="grid gap-3">
               {state.data.map((r, idx) => {
                 const rid = String(
-                  (r as Record<string, unknown>).id ??
-                    (r as Record<string, unknown>).request_id ??
-                    (r as Record<string, unknown>).requestId ??
+                  (r as unknown as Record<string, unknown>).id ??
+                    (r as unknown as Record<string, unknown>).request_id ??
+                    (r as unknown as Record<string, unknown>).requestId ??
                     idx,
                 );
                 return (
@@ -1142,7 +1142,7 @@ function RequestRow({
   updating: boolean;
   onStatusChange: (status: DocumentationRequestStatus) => void;
 }) {
-  const r = req as Record<string, unknown>;
+  const r = req as unknown as Record<string, unknown>;
   const id = String(r.id ?? r.request_id ?? r.requestId ?? "—");
   const title = String(r.title ?? "Untitled");
   const category = String(r.category ?? "—");
